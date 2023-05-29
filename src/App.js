@@ -46,7 +46,7 @@ import createCache from "@emotion/cache";
 // Material Dashboard 2 React routes
 import routes from "routes";
 
-import { useAuth } from "hooks/useAuth";
+import { whiteList, useAuth } from "hooks/useAuth";
 
 // Material Dashboard 2 React contexts
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
@@ -173,11 +173,12 @@ export default function App() {
             {getRoutes(routes)}
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
-        ) : null}
-        <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboard" />} />
-        </Routes>
+        ) : (
+          <Routes>
+            {getRoutes(routes.filter((route) => whiteList.includes(route.route)))}
+            <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
+          </Routes>
+        )}
       </ThemeProvider>
     </CacheProvider>
   ) : (
@@ -203,7 +204,12 @@ export default function App() {
           {getRoutes(routes)}
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
-      ) : null}
+      ) : (
+        <Routes>
+          {getRoutes(routes.filter((route) => whiteList.includes(route.route)))}
+          <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
+        </Routes>
+      )}
     </ThemeProvider>
   );
 }

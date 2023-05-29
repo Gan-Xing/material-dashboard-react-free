@@ -9,7 +9,7 @@ const getAccessToken = async (): Promise<string | undefined> => {
   return Promise.resolve("token");
 };
 
-const whiteList = [
+export const whiteList = [
   "/authentication/sign-in",
   //   "/social-login",
   //   "/auth-redirect",
@@ -40,7 +40,11 @@ export function useAuth(): boolean {
         }
       } else {
         if (!whiteList.includes(location.pathname)) {
-          navigate(`/authentication/sign-in=${location.pathname}`, { replace: true });
+          if (location.pathname === "/") {
+            navigate("/authentication/sign-in", { replace: true });
+          } else {
+            navigate(`/authentication/sign-in?redirect=${location.pathname}`, { replace: true });
+          }
         }
       }
     };
