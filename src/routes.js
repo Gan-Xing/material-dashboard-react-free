@@ -44,7 +44,6 @@ import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
-import Settings from "layouts/pages/account/settings";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -57,14 +56,6 @@ const routes = [
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
     component: <Dashboard />,
-  },
-  {
-    type: "collapse",
-    name: "Settings",
-    key: "profile-settings",
-    icon: <Icon fontSize="small">dashboard</Icon>,
-    route: "/pages/account/settings",
-    component: <Settings />,
   },
   {
     type: "collapse",
