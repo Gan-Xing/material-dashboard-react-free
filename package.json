@@ -20,6 +20,7 @@
     "@mui/material": "5.12.3",
     "chart.js": "4.3.0",
     "chroma-js": "2.4.2",
+    "lodash-es": "^4.17.21",
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-chartjs-2": "5.2.0",
@@ -30,7 +31,8 @@
     "react-table": "7.8.0",
     "stylis": "4.1.4",
     "stylis-plugin-rtl": "2.1.1",
-    "yup": "1.1.1"
+    "yup": "1.1.1",
+    "zustand": "^4.3.8"
   },
   "scripts": {
     "start": "GENERATE_SOURCEMAP=true react-scripts start",
@@ -58,6 +60,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash-es": "^4.17.7",
     "eslint": "8.39.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-import": "2.27.5",
@@ -65,7 +68,8 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",
-    "prettier": "2.8.8"
+    "prettier": "2.8.8",
+    "typescript": "^5.0.4"
   },
   "overrides": {
     "svgo": "3.0.2"
