@@ -1,28 +1,16 @@
-import type { App } from 'vue'
-import type { RouteRecordRaw } from 'vue-router'
-import { createRouter, createWebHistory } from 'vue-router'
-import remainingRouter from './modules/remaining'
+import { useRouterStore, Route, RouteStore } from "store/router";
 
-// 创建路由实例
-const router = createRouter({
-  history: createWebHistory(), // createWebHashHistory URL带#，createWebHistory URL不带#
-  strict: true,
-  routes: remainingRouter as RouteRecordRaw[],
-  scrollBehavior: () => ({ left: 0, top: 0 })
-})
+const resetWhiteNameList = ["Sign In"];
 
-export const resetRouter = (): void => {
-  const resetWhiteNameList = ['Redirect', 'Login', 'NoFind', 'Root']
-  router.getRoutes().forEach((route) => {
-    const { name } = route
-    if (name && !resetWhiteNameList.includes(name as string)) {
-      router.hasRoute(name) && router.removeRoute(name)
+export function resetRouter() {
+  const { routes, setRoutes } = useRouterStore.getState() as RouteStore;
+
+  const newRoutes = routes.map((route: Route) => {
+    if (!resetWhiteNameList.includes(route.name)) {
+      return { ...route, hiden: true };
     }
-  })
-}
+    return route;
+  });
 
-export const setupRouter = (app: App<Element>) => {
-  app.use(router)
+  setRoutes(newRoutes);
 }
-
-export default router

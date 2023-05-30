@@ -8,11 +8,11 @@ import axios, {
 import qs from "qs";
 import { config } from "config/axios/config";
 import { setNotification, setMessageBox } from "utils/notification";
-// import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
-import { getAccessToken, getRefreshToken, getTenantId, removeToken, setToken } from "utils/auth";
+import { getAccessToken, getRefreshToken, getTenantId, setToken } from "utils/auth";
+// import { getAccessToken, getRefreshToken, getTenantId, removeToken, setToken } from "utils/auth";
 import errorCode from "./errorCode";
 import { t } from "hooks/web/useI18n";
-// import { resetRouter } from "@/router";
+// import { resetRouter } from "router";
 // import { useCache } from "hooks/web/useCache";
 
 const tenantEnable = process.env.REACT_APP_TENANT_ENABLE;

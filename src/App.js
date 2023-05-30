@@ -44,7 +44,8 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
 // Material Dashboard 2 React routes
-import routes from "routes";
+// import routes from "router/routes";
+import { useRouterStore } from "store/router";
 
 import { whiteList, useAuth } from "hooks/useAuth";
 
@@ -57,7 +58,7 @@ import brandDark from "assets/images/logo-ct-dark.png";
 
 // Notification
 import { registerNotification, registerMessageBox } from "utils/notification";
-import { useNotificationStore, useMessageBoxStore } from "stores/notification";
+import { useNotificationStore, useMessageBoxStore } from "store/notification";
 import {
   Snackbar,
   Alert,
@@ -85,6 +86,7 @@ export default function App() {
     showMessageBox,
     closeMessageBox,
   } = useMessageBoxStore();
+  const { routes } = useRouterStore();
 
   const [controller, dispatch] = useMaterialUIController();
   const {

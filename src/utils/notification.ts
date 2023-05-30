@@ -3,7 +3,6 @@ let setNotification: (
   type: "success" | "error" | "info" | "warning"
 ) => void = () => {};
 
-
 const registerNotification = (
   callback: (message: string, type: "success" | "error" | "info" | "warning") => void
 ) => {
