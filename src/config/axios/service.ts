@@ -5,15 +5,15 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-
-import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import qs from "qs";
 import { config } from "config/axios/config";
+import { setNotification, setMessageBox } from "utils/notification";
+// import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import { getAccessToken, getRefreshToken, getTenantId, removeToken, setToken } from "utils/auth";
 import errorCode from "./errorCode";
-
-import { resetRouter } from "@/router";
-import { useCache } from "hooks/web/useCache";
+import { t } from "hooks/web/useI18n";
+// import { resetRouter } from "@/router";
+// import { useCache } from "hooks/web/useCache";
 
 const tenantEnable = process.env.REACT_APP_TENANT_ENABLE;
 const { result_code, base_url, request_timeout } = config;
@@ -110,7 +110,6 @@ service.interceptors.response.use(
       // 返回“[HTTP]请求没有返回值”;
       throw new Error();
     }
-    const { t } = useI18n();
     // 未设置状态码则默认成功状态
     const code = data.code || result_code;
     // 二进制数据则直接返回
@@ -166,28 +165,21 @@ service.interceptors.response.use(
         });
       }
     } else if (code === 500) {
-      ElMessage.error(t("sys.api.errMsg500"));
+      setNotification(t("sys.api.errMsg500"), "error");
       return Promise.reject(new Error(msg));
     } else if (code === 901) {
-      ElMessage.error({
-        offset: 300,
-        dangerouslyUseHTMLString: true,
-        message:
-          "<div>" +
-          t("sys.api.errMsg901") +
-          "</div>" +
-          "<div> &nbsp; </div>" +
-          "<div>参考 https://doc.iocoder.cn/ 教程</div>" +
-          "<div> &nbsp; </div>" +
-          "<div>5 分钟搭建本地环境</div>",
-      });
+      setMessageBox(
+        `${t("sys.api.errMsg901")}\n\n参考 https://doc.iocoder.cn/ 教程\n\n5 分钟搭建本地环境`,
+        "Error 901",
+        "error"
+      );
       return Promise.reject(new Error(msg));
     } else if (code !== 200) {
       if (msg === "无效的刷新令牌") {
         // hard coding：忽略这个提示，直接登出
         console.log(msg);
       } else {
-        ElNotification.error({ title: msg });
+        setNotification(msg, "error");
       }
       return Promise.reject("error");
     } else {
@@ -197,7 +189,6 @@ service.interceptors.response.use(
   (error: AxiosError) => {
     console.log("err" + error); // for debug
     let { message } = error;
-    const { t } = useI18n();
     if (message === "Network Error") {
       message = t("sys.api.errorMessage");
     } else if (message.includes("timeout")) {
@@ -205,7 +196,7 @@ service.interceptors.response.use(
     } else if (message.includes("Request failed with status code")) {
       message = t("sys.api.apiRequestFailed") + message.substr(message.length - 3);
     }
-    ElMessage.error(message);
+    setNotification(message, "error");
     return Promise.reject(error);
   }
 );
@@ -217,24 +208,24 @@ const refreshToken = async () => {
   );
 };
 const handleAuthorized = () => {
-  const { t } = useI18n();
   if (!isRelogin.show) {
-    isRelogin.show = true;
-    ElMessageBox.confirm(t("sys.api.timeoutMessage"), t("common.confirmTitle"), {
-      showCancelButton: false,
-      closeOnClickModal: false,
-      showClose: false,
-      confirmButtonText: t("login.relogin"),
-      type: "warning",
-    }).then(() => {
-      const { wsCache } = useCache();
-      resetRouter(); // 重置静态路由表
-      wsCache.clear();
-      removeToken();
-      isRelogin.show = false;
-      // 干掉token后再走一次路由让它过router.beforeEach的校验
-      window.location.href = window.location.href;
-    });
+    setMessageBox(t("sys.api.timeoutMessage"), t("common.confirmTitle"), "warning");
+    // isRelogin.show = true;
+    // ElMessageBox.confirm(t("sys.api.timeoutMessage"), t("common.confirmTitle"), {
+    //   showCancelButton: false,
+    //   closeOnClickModal: false,
+    //   showClose: false,
+    //   confirmButtonText: t("login.relogin"),
+    //   type: "warning",
+    // }).then(() => {
+    //   const { wsCache } = useCache();
+    //   resetRouter(); // 重置静态路由表
+    //   wsCache.clear();
+    //   removeToken();
+    //   isRelogin.show = false;
+    //   // 干掉token后再走一次路由让它过router.beforeEach的校验
+    //   window.location.href = window.location.href;
+    // });
   }
   return Promise.reject(t("sys.api.timeoutMessage"));
 };

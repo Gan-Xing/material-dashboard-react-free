@@ -55,7 +55,37 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 
+// Notification
+import { registerNotification, registerMessageBox } from "utils/notification";
+import { useNotificationStore, useMessageBoxStore } from "stores/notification";
+import {
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
+
 export default function App() {
+  const {
+    open: notificationOpen,
+    message: notificationMessage,
+    type: notificationType,
+    showNotification,
+    closeNotification,
+  } = useNotificationStore();
+
+  const {
+    open: messageBoxOpen,
+    message: messageBoxMessage,
+    title: messageBoxTitle,
+    type: messageBoxType,
+    showMessageBox,
+    closeMessageBox,
+  } = useMessageBoxStore();
+
   const [controller, dispatch] = useMaterialUIController();
   const {
     miniSidenav,
@@ -111,6 +141,12 @@ export default function App() {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
+
+  // Register Notification State
+  useEffect(() => {
+    registerNotification(showNotification);
+    registerMessageBox(showMessageBox);
+  }, []);
 
   const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
@@ -179,6 +215,21 @@ export default function App() {
             <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
           </Routes>
         )}
+        <Snackbar open={notificationOpen} autoHideDuration={6000} onClose={closeNotification}>
+          <Alert onClose={closeNotification} severity={notificationType} sx={{ width: "100%" }}>
+            {notificationMessage}
+          </Alert>
+        </Snackbar>
+
+        <Dialog open={messageBoxOpen} onClose={closeMessageBox}>
+          <DialogTitle>{messageBoxTitle}</DialogTitle>
+          <DialogContent>
+            <Alert severity={messageBoxType}>{messageBoxMessage}</Alert>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeMessageBox}>Close</Button>
+          </DialogActions>
+        </Dialog>
       </ThemeProvider>
     </CacheProvider>
   ) : (
@@ -210,6 +261,21 @@ export default function App() {
           <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
         </Routes>
       )}
+      <Snackbar open={notificationOpen} autoHideDuration={6000} onClose={closeNotification}>
+        <Alert onClose={closeNotification} severity={notificationType} sx={{ width: "100%" }}>
+          {notificationMessage}
+        </Alert>
+      </Snackbar>
+
+      <Dialog open={messageBoxOpen} onClose={closeMessageBox}>
+        <DialogTitle>{messageBoxTitle}</DialogTitle>
+        <DialogContent>
+          <Alert severity={messageBoxType}>{messageBoxMessage}</Alert>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeMessageBox}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </ThemeProvider>
   );
 }
