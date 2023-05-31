@@ -45,7 +45,7 @@ import createCache from "@emotion/cache";
 
 // Material Dashboard 2 React routes
 // import routes from "router/routes";
-import { useRouterStore } from "store/router";
+import useRouteStore from "store/router";
 
 import { whiteList, useAuth } from "hooks/useAuth";
 
@@ -86,7 +86,7 @@ export default function App() {
     showMessageBox,
     closeMessageBox,
   } = useMessageBoxStore();
-  const { routes } = useRouterStore();
+  const { routes } = useRouteStore();
 
   const [controller, dispatch] = useMaterialUIController();
   const {

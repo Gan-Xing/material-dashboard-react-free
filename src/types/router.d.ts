@@ -1,6 +1,3 @@
-import type { RouteRecordRaw } from 'vue-router'
-import { defineComponent } from 'vue'
-
 /**
 * redirect: noredirect        当设置 noredirect 的时候该路由在面包屑导航中不可被点击
 * name:'router-name'          设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
@@ -32,50 +29,74 @@ import { defineComponent } from 'vue'
     canTo: true               设置为true即使hidden为true，也依然可以进行路由跳转(默认 false)
   }
 **/
-declare module 'vue-router' {
-  interface RouteMeta extends Record<string | number | symbol, unknown> {
-    hidden?: boolean
-    alwaysShow?: boolean
-    title?: string
-    icon?: string
-    noCache?: boolean
-    breadcrumb?: boolean
-    affix?: boolean
-    activeMenu?: string
-    noTagsView?: boolean
-    followAuth?: string
-    canTo?: boolean
-  }
+import { ReactNode, LazyExoticComponent, ComponentType } from "react";
+import { RouteProps } from "react-router-dom";
+/**
+ * RouteMeta properties are used for custom handling within the application
+ * These properties are not natively supported by React Router
+ **/
+interface RouteMeta {
+  hidden?: boolean;
+  alwaysShow?: boolean;
+  title?: string;
+  icon?: string;
+  noCache?: boolean;
+  breadcrumb?: boolean;
+  affix?: boolean;
+  activeMenu?: string;
+  noTagsView?: boolean;
+  followAuth?: string;
+  canTo?: boolean;
 }
 
-type Component<T = any> =
-  | ReturnType<typeof defineComponent>
-  | (() => Promise<typeof import('*.vue')>)
-  | (() => Promise<T>)
+interface AppRouteRecordRaw {
+  path: string;
+  element: React.ReactNode;
+  meta: RouteMeta;
+  children?: AppRouteRecordRaw[];
+  fullPath?: string;
+  keepAlive?: boolean;
+}
+interface Component {
+  (): Promise<{ default: ComponentType }>;
+}
+interface MUIRoutes {
+  key: string;
+  type?: "route" | "collapse" | "divider" | "title";
+  name?: string;
+  icon?: React.ReactNode;
+  route?: string;
+  component?: React.ReactNode;
+  collapse?: NewRoutes;
+}
+interface AppCustomRouteRecordRaw {
+  icon: any;
+  name: string;
+  meta: RouteMeta;
+  component: string;
+  componentName?: string;
+  path: string;
+  redirect: string;
+  children?: AppCustomRouteRecordRaw[];
+  keepAlive?: boolean;
+  visible?: boolean;
+  parentId?: number;
+  alwaysShow?: boolean;
+}
 
-declare global {
-  interface AppRouteRecordRaw extends Omit<RouteRecordRaw, 'meta'> {
-    name: string
-    meta: RouteMeta
-    component?: Component | string
-    children?: AppRouteRecordRaw[]
-    props?: Recordable
-    fullPath?: string
-    keepAlive?: boolean
-  }
+interface RouteInfo {
+  pathname: string;
+  search: string;
+  hash: string;
+  state: unknown;
+  params: ReturnType<typeof useParams>;
+  // meta: (typeof routeMeta)[string];
+}
 
-  interface AppCustomRouteRecordRaw extends Omit<RouteRecordRaw, 'meta'> {
-    icon: any
-    name: string
-    meta: RouteMeta
-    component: string
-    componentName?: string
-    path: string
-    redirect: string
-    children?: AppCustomRouteRecordRaw[]
-    keepAlive?: boolean
-    visible?: boolean
-    parentId?: number
-    alwaysShow?: boolean
-  }
+interface RouteStore {
+  routes: MUIRoutes[];
+  menuTabRouters: MUIRoutes[];
+  setRoutes: (newRoutes: MUIRoutes[]) => void;
+  generateRoutes: () => Promise<void>;
+  setMenuTabRouters: (routers: MUIRoutes[]) => void;
 }

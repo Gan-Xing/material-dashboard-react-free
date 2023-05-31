@@ -47,8 +47,9 @@ import SignUp from "layouts/authentication/sign-up";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
+import { MUIRoutes } from "types/router";
 
-const routes = [
+const routes:MUIRoutes[] = [
   {
     type: "collapse",
     name: "Dashboard",
@@ -114,5 +115,10 @@ const routes = [
     component: <SignUp />,
   },
 ];
+
+export const componentModules = routes.reduce((modules, route) => {
+  modules[route.key] = route.component;
+  return modules;
+}, {});
 
 export default routes;

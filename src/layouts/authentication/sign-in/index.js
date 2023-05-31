@@ -44,6 +44,9 @@ import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
 
+  const handleClick = () => {
+    alert("你点击了按钮！");
+  };
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   return (
@@ -102,7 +105,7 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
+              <MDButton variant="gradient" color="info" fullWidth onClick={handleClick}>
                 sign in
               </MDButton>
             </MDBox>

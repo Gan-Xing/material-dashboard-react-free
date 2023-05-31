@@ -1,13 +1,9 @@
 // useAuth.ts
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-
-// 这是你获取 access token 的函数，你需要在其他地方实现它
-// 它应该返回一个字符串（代表 access token）或者 undefined（如果没有 access token）
-const getAccessToken = async (): Promise<string | undefined> => {
-  // 实现逻辑
-  return Promise.resolve("token");
-};
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { getAccessToken } from "utils/auth";
+import useUserStore from "store/user";
+import useRouteStore from "store/router";
 
 export const whiteList = [
   "/authentication/sign-in",
@@ -22,7 +18,10 @@ export function useAuth(): boolean {
   const [isAuth, setIsAuth] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [searchParams] = useSearchParams(); // Moved this line here
+  const isSetUser = useUserStore((state) => state.isSetUser);
+  const setUserInfoAction = useUserStore((state) => state.setUserInfoAction);
+  const generateRoutes = useRouteStore((state) => state.generateRoutes);
   useEffect(() => {
     const checkAuth = async (): Promise<void> => {
       const accessToken = await getAccessToken();
@@ -31,11 +30,16 @@ export function useAuth(): boolean {
         if (location.pathname === "/authentication/sign-in") {
           navigate("/dashboard", { replace: true });
         } else {
-          // 根据你的应用情况，可能需要获取一些额外的信息
-          // 例如：字典、用户信息、权限等
-          // await getDicts();
-          // await getUserInfo();
-          // await getPermissions();
+          if (!isSetUser) {
+            await setUserInfoAction();
+          }
+          await generateRoutes();
+          const redirect = searchParams.get("redirect");
+          if (redirect !== null) {
+            navigate(decodeURIComponent(redirect), { replace: true });
+          } else {
+            navigate("/dashboard", { replace: true });
+          }
           setIsAuth(true);
         }
       } else {
@@ -50,7 +54,7 @@ export function useAuth(): boolean {
     };
 
     checkAuth();
-  }, [location, navigate]);
+  }, [location, navigate, searchParams, isSetUser]);
 
   return isAuth;
 }

@@ -1,12 +1,12 @@
-import { useRouterStore, Route, RouteStore } from "store/router";
+import useRouteStore from "store/router";
 
 const resetWhiteNameList = ["Sign In"];
 
 export function resetRouter() {
-  const { routes, setRoutes } = useRouterStore.getState() as RouteStore;
+  const { routes, setRoutes } = useRouteStore.getState();
 
-  const newRoutes = routes.map((route: Route) => {
-    if (!resetWhiteNameList.includes(route.name)) {
+  const newRoutes = routes.map((route) => {
+    if (route?.name && !resetWhiteNameList.includes(route.name)) {
       return { ...route, hiden: true };
     }
     return route;
