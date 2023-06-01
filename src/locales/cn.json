@@ -103,6 +103,11 @@
     "small": "小"
   },
   "login": {
+    "requiredField": "该字段不能为空",
+    "invalidEmail": "无效的邮箱地址",
+    "invalidPhone": "无效的手机号码",
+    "invalidURL": "无效的URL地址",
+    "invalidColor": "无效的颜色格式",
     "welcome": "欢迎使用本系统",
     "message": "开箱即用的中后台管理系统",
     "tenantname": "租户名称",

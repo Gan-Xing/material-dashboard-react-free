@@ -1,10 +1,10 @@
 import { isUrl } from "utils/is";
-import { componentModules } from "router/routes";
+// import { componentModules } from "router/routes";
 import {
-  AppCustomRouteRecordRaw,
+  // AppCustomRouteRecordRaw,
   AppRouteRecordRaw,
   RouteInfo,
-  RouteMeta,
+  // RouteMeta,
   MUIRoutes,
 } from "types/router";
 import { useLocation, useParams } from "react-router-dom";
@@ -111,71 +111,71 @@ export const ascending = (arr: any[]) => {
 // };
 
 // 后端控制路由生成
-export const generateRoute = (routes: AppCustomRouteRecordRaw[]): AppRouteRecordRaw[] => {
+export const generateRoute = (): AppRouteRecordRaw[] => {
   const res: AppRouteRecordRaw[] = [];
-  for (const route of routes) {
-    const meta = {
-      title: route.name,
-      icon: route.icon,
-      hidden: !route.visible,
-      noCache: !route.keepAlive,
-      alwaysShow:
-        route.children &&
-        route.children.length === 1 &&
-        (route.alwaysShow !== undefined ? route.alwaysShow : true),
-    } as RouteMeta;
-    // 路由地址转首字母大写驼峰，作为路由名称，适配keepAlive
-    let data: AppRouteRecordRaw = {
-      path: route.path,
-      element:
-        route?.componentName && route?.componentName?.length > 0
-          ? React.createElement(componentModules[route.componentName])
-          : React.createElement(componentModules[toCamelCase(route.path, true)]),
-      meta: meta,
-    };
+  // for (const route of routes) {
+  //   const meta = {
+  //     title: route.name,
+  //     icon: route.icon,
+  //     hidden: !route.visible,
+  //     noCache: !route.keepAlive,
+  //     alwaysShow:
+  //       route.children &&
+  //       route.children.length === 1 &&
+  //       (route.alwaysShow !== undefined ? route.alwaysShow : true),
+  //   } as RouteMeta;
+  //   // 路由地址转首字母大写驼峰，作为路由名称，适配keepAlive
+  //   let data: AppRouteRecordRaw = {
+  //     path: route.path,
+  //     element:
+  //       route?.componentName && route?.componentName?.length > 0
+  //         ? React.createElement(componentModules[route.componentName])
+  //         : React.createElement(componentModules[toCamelCase(route.path, true)]),
+  //     meta: meta,
+  //   };
 
-    //处理顶级非目录路由
-    if (!route.children && route.parentId == 0 && route.component) {
-      data.element = React.createElement(componentModules["Layout"]);
-      data.meta = {};
-      data.path = "";
-      meta.alwaysShow = true;
-      const childrenData = {
-        path: route.path,
-        element: React.createElement(
-          componentModules[route?.component ?? toCamelCase(route.path, true)]
-        ),
-        meta: meta,
-      };
-      data.children = [childrenData];
-    } else {
-      // 目录
-      if (route.children) {
-        data.element = React.createElement(componentModules["Layout"]);
-        data.children = generateRoute(route.children);
-        // 外链
-      } else if (isUrl(route.path)) {
-        data = {
-          path: "/external-link",
-          element: React.createElement(componentModules["Layout"]),
-          meta: {
-            name: route.name,
-          },
-          children: [
-            {
-              ...data,
-              path: route.path,
-            },
-          ],
-        } as AppRouteRecordRaw;
-        // 菜单
-      } else {
-        // 对后端传component组件路径和不传做兼容（如果后端传component组件路径，那么path可以随便写，如果不传，component组件路径会根path保持一致）
-        data.element = React.createElement(componentModules[route.component || route.path]);
-      }
-    }
-    res.push(data);
-  }
+  //   //处理顶级非目录路由
+  //   if (!route.children && route.parentId == 0 && route.component) {
+  //     data.element = React.createElement(componentModules["Layout"]);
+  //     data.meta = {};
+  //     data.path = "";
+  //     meta.alwaysShow = true;
+  //     const childrenData = {
+  //       path: route.path,
+  //       element: React.createElement(
+  //         componentModules[route?.component ?? toCamelCase(route.path, true)]
+  //       ),
+  //       meta: meta,
+  //     };
+  //     data.children = [childrenData];
+  //   } else {
+  //     // 目录
+  //     if (route.children) {
+  //       data.element = React.createElement(componentModules["Layout"]);
+  //       data.children = generateRoute(route.children);
+  //       // 外链
+  //     } else if (isUrl(route.path)) {
+  //       data = {
+  //         path: "/external-link",
+  //         element: React.createElement(componentModules["Layout"]),
+  //         meta: {
+  //           name: route.name,
+  //         },
+  //         children: [
+  //           {
+  //             ...data,
+  //             path: route.path,
+  //           },
+  //         ],
+  //       } as AppRouteRecordRaw;
+  //       // 菜单
+  //     } else {
+  //       // 对后端传component组件路径和不传做兼容（如果后端传component组件路径，那么path可以随便写，如果不传，component组件路径会根path保持一致）
+  //       data.element = React.createElement(componentModules[route.component || route.path]);
+  //     }
+  //   }
+  //   res.push(data);
+  // }
   return res;
 };
 
@@ -302,16 +302,17 @@ export const pathResolve = (parentPath: string, path: string) => {
 //     }
 //   }
 // };
-const toCamelCase = (str: string, upperCaseFirst: boolean) => {
-  str = (str || "")
-    .replace(/-(.)/g, function (group1: string) {
-      return group1.toUpperCase();
-    })
-    .replaceAll("-", "");
 
-  if (upperCaseFirst && str) {
-    str = str.charAt(0).toUpperCase() + str.slice(1);
-  }
+// const toCamelCase = (str: string, upperCaseFirst: boolean) => {
+//   str = (str || "")
+//     .replace(/-(.)/g, function (group1: string) {
+//       return group1.toUpperCase();
+//     })
+//     .replaceAll("-", "");
 
-  return str;
-};
+//   if (upperCaseFirst && str) {
+//     str = str.charAt(0).toUpperCase() + str.slice(1);
+//   }
+
+//   return str;
+// };

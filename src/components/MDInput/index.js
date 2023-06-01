@@ -13,30 +13,90 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { forwardRef } from "react";
-
-// prop-types is a library for typechecking of props
+import { forwardRef, useState } from "react";
 import PropTypes from "prop-types";
-
-// Custom styles for MDInput
 import MDInputRoot from "components/MDInput/MDInputRoot";
+import { validateEmail, validatePhone, validateURL, validateColor } from "utils/validate";
+import { t } from "hooks/web/useI18n";
 
-const MDInput = forwardRef(({ error, success, disabled, ...rest }, ref) => (
-  <MDInputRoot {...rest} ref={ref} ownerState={{ error, success, disabled }} />
-));
+const MDInput = forwardRef(
+  ({ error, success, disabled, validate, required, type, ...rest }, ref) => {
+    const [validationError, setValidationError] = useState(null);
 
-// Setting default values for the props of MDInput
+    const validateValue = (value) => {
+      if (required && value.trim() === "") {
+        setValidationError(t("login.requiredField"));
+      } else if (validate) {
+        switch (type) {
+          case "email":
+            if (!validateEmail(value)) {
+              setValidationError(t("login.invalidEmail"));
+            } else {
+              setValidationError(null);
+            }
+            break;
+          case "tel":
+            if (!validatePhone(value)) {
+              setValidationError(t("login.invalidPhone"));
+            } else {
+              setValidationError(null);
+            }
+            break;
+          case "url":
+            if (!validateURL(value)) {
+              setValidationError(t("login.invalidURL"));
+            } else {
+              setValidationError(null);
+            }
+            break;
+          case "color":
+            if (!validateColor(value)) {
+              setValidationError(t("login.invalidColor"));
+            } else {
+              setValidationError(null);
+            }
+            break;
+          default:
+            setValidationError(null);
+        }
+      } else {
+        setValidationError(null);
+      }
+    };
+
+    return (
+      <MDInputRoot
+        {...rest}
+        ref={ref}
+        ownerState={{
+          error: error || !!validationError,
+          success,
+          disabled,
+        }}
+        helperText={validationError}
+        onBlur={(e) => validateValue(e.target.value)}
+        required={required}
+      />
+    );
+  }
+);
+
 MDInput.defaultProps = {
   error: false,
   success: false,
   disabled: false,
+  validate: false,
+  required: false,
+  type: "text",
 };
 
-// Typechecking props for the MDInput
 MDInput.propTypes = {
   error: PropTypes.bool,
   success: PropTypes.bool,
   disabled: PropTypes.bool,
+  validate: PropTypes.bool,
+  required: PropTypes.bool,
+  type: PropTypes.string,
 };
 
 export default MDInput;

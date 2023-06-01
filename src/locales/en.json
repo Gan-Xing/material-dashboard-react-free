@@ -103,6 +103,11 @@
     "small": "Small"
   },
   "login": {
+    "requiredField": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "invalidPhone": "Invalid phone number",
+    "invalidURL": "Invalid URL",
+    "invalidColor": "Invalid color format",
     "welcome": "Welcome to the system",
     "message": "Backstage management system",
     "tenantname": "TenantName",

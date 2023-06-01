@@ -41,11 +41,90 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
+//Ruoyi API
+import * as LoginApi from "api/login";
+import * as authUtil from "utils/auth";
+
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const schema = yup.object().shape({
+  // email: yup.string().email().required(),
+  password: yup.string().min(8).required(),
+});
+
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
+  const [loginData, setLoginData] = useState({
+    isShowPassword: false,
+    captchaEnable: process.env.REACT_APP_CAPTCHA_ENABLE,
+    tenantEnable: process.env.REACT_APP_TENANT_ENABLE,
+    loginForm: {
+      tenantName: "芋道源码",
+      username: "admin",
+      password: "admin123",
+      captchaVerification: "",
+      rememberMe: false,
+    },
+  });
+  const [loginLoading, setLoginLoading] = useState(false);
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const handleClick = () => {
-    alert("你点击了按钮！");
+  //获取租户ID
+  const getTenantId = async () => {
+    if (loginData.tenantEnable === "true") {
+      const res = await LoginApi.getTenantIdByName(loginData.loginForm.tenantName);
+      authUtil.setTenantId(res);
+      console.log("getTenantId", authUtil.getTenantId());
+    }
+  };
+
+  const handleLogin = async (data) => {
+    setLoginLoading(true);
+    try {
+      await getTenantId();
+
+      const updatedLoginForm = {
+        ...loginData.loginForm,
+        username: data.email,
+        password: data.password,
+        captchaVerification: data?.captchaVerification,
+      };
+
+      const res = await LoginApi.login(updatedLoginForm);
+
+      if (!res) {
+        return;
+      }
+
+      setLoginData((prevState) => ({
+        ...prevState,
+        loginForm: updatedLoginForm,
+      }));
+
+      if (loginData.loginForm.rememberMe) {
+        authUtil.setLoginForm(updatedLoginForm);
+      } else {
+        authUtil.removeLoginForm();
+      }
+
+      authUtil.setToken(res);
+      console.log("token", res);
+    } catch {
+      setLoginLoading(false);
+    } finally {
+      // setTimeout(() => {
+      //   const loadingInstance = ElLoading.service();
+      //   loadingInstance.close();
+      // }, 400);
+    }
   };
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
@@ -87,10 +166,44 @@ function Basic() {
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form">
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth />
+              <Controller
+                name="email"
+                control={control}
+                defaultValue=""
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <MDInput
+                    {...field}
+                    type="email"
+                    label="Email"
+                    fullWidth
+                    required
+                    // validate
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                  />
+                )}
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth />
+              <Controller
+                name="password"
+                control={control}
+                defaultValue=""
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <MDInput
+                    {...field}
+                    type="password"
+                    label="Password"
+                    fullWidth
+                    required
+                    validate
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                  />
+                )}
+              />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -105,8 +218,13 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth onClick={handleClick}>
-                sign in
+              <MDButton
+                variant="gradient"
+                color="info"
+                fullWidth
+                onClick={handleSubmit(handleLogin)}
+              >
+                Sign in
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">

@@ -49,7 +49,7 @@ import SignUp from "layouts/authentication/sign-up";
 import Icon from "@mui/material/Icon";
 import { MUIRoutes } from "types/router";
 
-const routes:MUIRoutes[] = [
+const routes: MUIRoutes[] = [
   {
     type: "collapse",
     name: "Dashboard",

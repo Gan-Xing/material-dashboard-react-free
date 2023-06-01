@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { cloneDeep } from "lodash-es";
 import { getAsyncRoutes } from "api/login";
 import { CACHE_KEY, useCache } from "hooks/web/useCache";
-import { generateRoute, transformRoutes } from "utils/routerHelper";
+import { transformRoutes } from "utils/routerHelper";
 import routes from "router/routes";
 import { MUIRoutes, RouteStore } from "types/router";
 
@@ -14,6 +14,10 @@ const useRouteStore = create<RouteStore>((set) => ({
   routes: allRoutes,
   //   addRouters: [],
   menuTabRouters: [],
+  hasCheckedAuth: false,
+  accessToken: null,
+  setAccessToken: (token: string | null) => set({ accessToken: token }),
+  setHasCheckedAuth: (value: boolean) => set({ hasCheckedAuth: value }),
   setRoutes: (newRoutes: MUIRoutes[]) => set({ routes: newRoutes }),
   // getRouters: () => get().routes,
   // getAddRouters: () => flatMultiLevelRoutes(cloneDeep(get().addRouters)),
@@ -26,12 +30,13 @@ const useRouteStore = create<RouteStore>((set) => ({
       res = await getAsyncRoutes();
       wsCache.set(CACHE_KEY.ROLE_ROUTERS, res);
     }
-    const routerMap = generateRoute(res);
+    // const routerMap = generateRoute(res);
+    const routerMap = [];
     // ...use transformRoutes with your AppRouteRecordRaw routes array
     const newRoutes = transformRoutes(routerMap);
-    
+    console.log(newRoutes);
     set({
-      routes: cloneDeep(allRoutes).concat(newRoutes),
+      routes: cloneDeep(allRoutes).concat([]),
     });
   },
   setMenuTabRouters: (routers) =>

@@ -96,6 +96,10 @@ interface RouteInfo {
 interface RouteStore {
   routes: MUIRoutes[];
   menuTabRouters: MUIRoutes[];
+  hasCheckedAuth: boolean;
+  accessToken: string | null;
+  setAccessToken: (token: string | null) => void;
+  setHasCheckedAuth: (value: boolean) => void;
   setRoutes: (newRoutes: MUIRoutes[]) => void;
   generateRoutes: () => Promise<void>;
   setMenuTabRouters: (routers: MUIRoutes[]) => void;
