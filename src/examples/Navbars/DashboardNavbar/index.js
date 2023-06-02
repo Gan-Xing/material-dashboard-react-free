@@ -52,6 +52,9 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
+import useUserStore from "store/user";
+
+import { useNavigate } from "react-router-dom";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -59,6 +62,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+  const loginOut = useUserStore((state) => state.loginOut);
 
   useEffect(() => {
     // Setting the navbar type
@@ -123,6 +127,12 @@ function DashboardNavbar({ absolute, light, isMini }) {
     },
   });
 
+  const navigate = useNavigate();
+  const handleLoginOut = async () => {
+    await loginOut();
+    navigate("/login?redirect=/index", { replace: true });
+  };
+
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
@@ -139,11 +149,14 @@ function DashboardNavbar({ absolute, light, isMini }) {
               <MDInput label="Search here" />
             </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in/basic">
+              {/* <Link to="/authentication/sign-in/basic">
                 <IconButton sx={navbarIconButton} size="small" disableRipple>
                   <Icon sx={iconsStyle}>account_circle</Icon>
                 </IconButton>
-              </Link>
+              </Link> */}
+              <IconButton sx={navbarIconButton} size="small" disableRipple onClick={handleLoginOut}>
+                <Icon sx={iconsStyle}>account_circle</Icon>
+              </IconButton>
               <IconButton
                 size="small"
                 disableRipple

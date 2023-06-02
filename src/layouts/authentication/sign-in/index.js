@@ -49,6 +49,8 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
+import { useNavigate } from "react-router-dom";
+
 const schema = yup.object().shape({
   // email: yup.string().email().required(),
   password: yup.string().min(8).required(),
@@ -85,7 +87,7 @@ function Basic() {
       console.log("getTenantId", authUtil.getTenantId());
     }
   };
-
+  const navigate = useNavigate();
   const handleLogin = async (data) => {
     setLoginLoading(true);
     try {
@@ -116,6 +118,7 @@ function Basic() {
       }
 
       authUtil.setToken(res);
+      navigate("/dashboard", { replace: true });
       console.log("token", res);
     } catch {
       setLoginLoading(false);

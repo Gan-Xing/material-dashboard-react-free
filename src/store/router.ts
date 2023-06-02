@@ -2,13 +2,13 @@ import { create } from "zustand";
 import { cloneDeep } from "lodash-es";
 import { getAsyncRoutes } from "api/login";
 import { CACHE_KEY, useCache } from "hooks/web/useCache";
-import { transformRoutes } from "utils/routerHelper";
-import routes from "router/routes";
+import { generateRoute, transformRoutes } from "utils/routerHelper";
+import remainingroutes from "router/routes";
 import { MUIRoutes, RouteStore } from "types/router";
 
 const { wsCache } = useCache();
 
-const allRoutes: MUIRoutes[] = routes;
+const allRoutes: MUIRoutes[] = remainingroutes;
 
 const useRouteStore = create<RouteStore>((set) => ({
   routes: allRoutes,
@@ -30,13 +30,13 @@ const useRouteStore = create<RouteStore>((set) => ({
       res = await getAsyncRoutes();
       wsCache.set(CACHE_KEY.ROLE_ROUTERS, res);
     }
-    // const routerMap = generateRoute(res);
-    const routerMap = [];
+    const routerMap = generateRoute(res);
+    // const routerMap = [];
     // ...use transformRoutes with your AppRouteRecordRaw routes array
     const newRoutes = transformRoutes(routerMap);
     console.log(newRoutes);
     set({
-      routes: cloneDeep(allRoutes).concat([]),
+      routes: cloneDeep(allRoutes).concat(newRoutes),
     });
   },
   setMenuTabRouters: (routers) =>

@@ -49,7 +49,7 @@ import SignUp from "layouts/authentication/sign-up";
 import Icon from "@mui/material/Icon";
 import { MUIRoutes } from "types/router";
 
-const routes: MUIRoutes[] = [
+const remainingroutes: MUIRoutes[] = [
   {
     type: "collapse",
     name: "Dashboard",
@@ -116,9 +116,9 @@ const routes: MUIRoutes[] = [
   },
 ];
 
-export const componentModules = routes.reduce((modules, route) => {
+export const componentModules = remainingroutes.reduce((modules, route) => {
   modules[route.key] = route.component;
   return modules;
 }, {});
 
-export default routes;
+export default remainingroutes;

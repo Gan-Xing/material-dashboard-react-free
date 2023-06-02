@@ -25,23 +25,18 @@ export function useAuth(): boolean {
   const generateRoutes = useRouteStore((state) => state.generateRoutes);
   const hasCheckedAuth = useRouteStore((state) => state.hasCheckedAuth);
   const setHasCheckedAuth = useRouteStore((state) => state.setHasCheckedAuth);
-  const accessToken = useRouteStore((state) => state.accessToken);
-  const setAccessToken = useRouteStore((state) => state.setAccessToken);
 
   useEffect(() => {
     const fetchAccessToken = async (): Promise<void> => {
-      if (!accessToken) {
-        const token = await getAccessToken();
-        setAccessToken(token);
-        setIsAuth(Boolean(token));
-      }
+      const token = await getAccessToken();
+      setIsAuth(Boolean(token));
     };
     fetchAccessToken();
-  }, [accessToken, setAccessToken]);
+  }, []);
 
   useEffect(() => {
     const checkAuth = async (): Promise<void> => {
-      if (!hasCheckedAuth && accessToken) {
+      if (!hasCheckedAuth && getAccessToken()) {
         setHasCheckedAuth(true);
         if (!isSetUser) {
           await setUserInfoAction();
@@ -53,14 +48,14 @@ export function useAuth(): boolean {
         } else {
           navigate("/dashboard", { replace: true });
         }
-      } else if (!accessToken) {
+      } else if (!getAccessToken()) {
         if (!whiteList.includes(location.pathname)) {
           navigate(`/authentication/sign-in?redirect=${location.pathname}`, { replace: true });
         }
       }
     };
     checkAuth();
-  }, [location, navigate, searchParams, isSetUser, accessToken, hasCheckedAuth, setHasCheckedAuth]);
+  }, [location, navigate, searchParams, isSetUser, hasCheckedAuth, setHasCheckedAuth]);
 
   return isAuth;
 }

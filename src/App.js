@@ -44,7 +44,7 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
 // Material Dashboard 2 React routes
-// import routes from "router/routes";
+import remainingroutes from "router/routes";
 import useRouteStore from "store/router";
 
 import { whiteList, useAuth } from "hooks/useAuth";
@@ -208,7 +208,7 @@ export default function App() {
         {layout === "vr" && <Configurator />}
         {isAuth ? (
           <Routes>
-            {getRoutes(routes)}
+            {/* {getRoutes(routes)} */}
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
         ) : (
@@ -254,7 +254,7 @@ export default function App() {
       {layout === "vr" && <Configurator />}
       {isAuth ? (
         <Routes>
-          {getRoutes(routes)}
+          {getRoutes(remainingroutes)}
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       ) : (
